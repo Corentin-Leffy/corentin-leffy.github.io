@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.12">
+<title>Le patron de conception Décorateur en Dart</title>
+<style>
+pre code{display:block;overflow:auto;background-color:#011627}code{font-family:Menlo, Roboto Mono, Courier New, monospace;color:#D6DEEB;font-size:16px;background-color:#011627;border:1px solid #373b41;box-shadow:2px 4px 25px rgba(0, 0, 0, .15);border-radius:4px;padding:2px 4px}blockquote{border-left:0.3rem solid #eaeaea;margin-left:0;margin-right:0;font-style:italic;padding:1.5rem}blockquote span{display:block;font-style:normal;font-weight:bold;margin-top:1em}a{color:#81a2be;text-decoration:none}body{max-width:50em;padding-bottom:3em;margin:2em auto;font-family:'Lato', Arial, sans-serif;font-size:20px;color:#c5c8c6;line-height:1.5em;background-color: #1d1f21;}nav ol,nav ul{margin:0;padding:0;list-style:none}img{max-width:50em}h1{font-weight:bold;font-size:2em;margin-bottom:0.3em;padding-bottom:0.3em}p{margin-top:0.3em;padding:0;text-align:justify}
+</style>
+<link rel="stylesheet" href="../../highlight/styles/github.min.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Le patron de conception Décorateur en Dart</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_29_octobre_2019">29 Octobre 2019</h2>
+<div class="sectionbody">
+<div class="quoteblock">
+<blockquote>
+Un patron de conception est la meilleure solution à un problème de conception connu.
+</blockquote>
+<div class="attribution">
+&#8212; Mon professeur d'IUT
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quest_ce_que_cest">Qu&#8217;est-ce que c&#8217;est ?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Décorateur</strong> est un patron de conception, un des 23 des patrons de conceptions du <strong>Gang des 4</strong> (<a href="https://en.wikipedia.org/wiki/Design_Patterns">Gang of Four&#8217;s</a>).
+Avec eux, vous pouvez résoudre des problèmes de conception, concevoir des logiciels orientés objets flexibles et réutilisables, avec des composants que les développeurs peuvent facilement implémenter, modifier, tester et réutiliser.</p>
+</div>
+<div class="paragraph">
+<p><strong>Décorateur</strong> est un modèle de conception structurelle qui vous permet d&#8217;ajouter de nouveaux comportements (au moment de l&#8217;exécution) aux objets en les enveloppant dans un objet d&#8217;une classe de décoration, qui contient les comportements.
+<strong>Décorateur</strong> offre une alternative flexible à l&#8217;utilisation de l&#8217;héritage pour modifier le comportement.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quel_problème_résout_il">Quel problème résout-il ?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Si vous avez besoin de modifier le comportement d&#8217;un objet, vous allez d&#8217;abord penser à étendre la classe.
+Cependant, lorsqu&#8217;une classe étend d&#8217;une autre, elles sont toutes deux liées au moment de la compilation et ne peuvent pas être séparées dynamiquement.
+En effet, l&#8217;héritage est statique.
+Vous pouvez simplement remplacer l&#8217;objet par un autre créé à partir d&#8217;une sous-classe différente.
+De plus, l&#8217;héritage ne permet pas à la classe d&#8217;hériter de plusieurs classes en même temps : une classe enfant ne peut avoir qu&#8217;une seule classe parente.</p>
+</div>
+<div class="paragraph">
+<p>L&#8217;un des moyens de surmonter ces soucis consiste à utiliser l'<strong>agrégation</strong> ou la <strong>composition</strong> au lieu de l'<strong>héritage</strong>.
+Les deux alternatives fonctionnent presque de la même manière : un objet a une référence à un autre et lui délègue du travail, alors qu&#8217;avec l&#8217;héritage, l&#8217;objet lui-même est capable de faire ce travail, héritant du comportement de sa superclasse.
+Avec cette nouvelle approche, vous pouvez facilement remplacer l&#8217;objet « assistant » lié par un autre, en modifiant le comportement du conteneur lors de l&#8217;exécution.
+Un objet peut utiliser le comportement de différentes classes, ayant des références à plusieurs objets et leur déléguant toute sorte de travail.
+<strong>L&#8217;agrégation</strong>/<strong>la composition</strong> est le principe clé derrière de nombreux modèles de conception, y compris <strong>Décorateur</strong>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quelle_solution_décrit_il">Quelle solution décrit-il ?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Définissez les objets décorateurs qui implémentent l&#8217;interface de l&#8217;objet étendu (décoré) de manière transparente en lui transmettant toutes les requêtes et en exécutant des fonctionnalités supplémentaires avant/après la transmission d&#8217;une requête.
+Cela permet de travailler avec différents objets décorateurs pour étendre la fonctionnalité d&#8217;un objet de manière dynamique au moment de l&#8217;exécution.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="resources/decorator.png" alt="Diagramme de classes du patron de conception Décorateur">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exemple_dimplémentation">Exemple d&#8217;implémentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nous avons une classe abstraite <code>Coffee</code> avec un prix et des ingrédients :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dart hljs" data-lang="dart">abstract class Coffee {
+  double get cost;
+
+  String get ingredients;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>SimpleCoffee</code>  est la représentation concrète de la classe <code>Coffee</code> :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dart hljs" data-lang="dart">class SimpleCoffee implements Coffee {
+  @override
+  double get cost =&gt; 1;
+
+  @override
+  String get ingredients =&gt; "Coffee";
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Nous voulons ajouter un autre type de <code>Coffee</code>, comme un café au lait ou avec des pépites.
+Mais, si nous voulons prendre un café avec du lait et des pépites, cela va être compliqué avec l&#8217;héritage.
+Alors, allons-y avec la composition et le patron de conception <strong>Décorateur</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dart hljs" data-lang="dart">abstract class CoffeeDecorator implements Coffee {
+  final Coffee decoratedCoffee;
+
+  CoffeeDecorator(this.decoratedCoffee);
+
+  @override
+  double get cost =&gt; decoratedCoffee.cost;
+
+  @override
+  String get ingredients =&gt; decoratedCoffee.ingredients;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>CoffeeDecorator</code> est un délégué qui va modifier le comportement de <code>Coffee</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dart hljs" data-lang="dart">class WithMilk extends CoffeeDecorator {
+  WithMilk(Coffee decoratedCoffee) : super(decoratedCoffee);
+
+  @override
+  double get cost =&gt; super.cost + 0.5;
+
+  @override
+  String get ingredients =&gt; super.ingredients + ", Milk";
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dart hljs" data-lang="dart">class WithSprinkles extends CoffeeDecorator {
+  WithSprinkles(Coffee decoratedCoffee) : super(decoratedCoffee);
+
+  @override
+  double get cost =&gt; super.cost + 0.2;
+
+  @override
+  String get ingredients =&gt; super.ingredients + ", Sprinkles";
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>WithMilk</code> et <code>WithSprinkles</code> sont toutes les deux des implémentations concrètes du décorateur qui mixent du lait ou des pépites avec du café.</p>
+</div>
+<div class="paragraph">
+<p>Voilà un petit programme qui créé un <code>Coffee</code> et le décore avec du lait et des pépites, puis affiche son prix et ses ingrédients</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dart hljs" data-lang="dart">main() {
+  Coffee coffee = SimpleCoffee();
+  printInformations(coffee); // Cost: 1.0; Ingredients: Coffee
+
+  coffee = WithMilk(coffee);
+  printInformations(coffee); // Cost: 1.5; Ingredients: Coffee, Milk
+
+  coffee = WithSprinkles(coffee);
+  printInformations(coffee); // Cost: 1.7; Ingredients: Coffee, Milk, Sprinkles
+}
+
+void printInformations(Coffee coffee) {
+  print("Cost: ${coffee.cost}; Ingredients: ${coffee.ingredients}");
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="../../highlight/highlight.min.js"></script>
+<script>
+if (!hljs.initHighlighting.called) {
+  hljs.initHighlighting.called = true
+  ;[].slice.call(document.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightBlock(el) })
+}
+</script>
+</body>
+</html>

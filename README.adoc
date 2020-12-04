@@ -1,0 +1,32 @@
+= Blog
+
+Mon blog à propos de programmation, Android, Kotlin, TDD et pleins d'autres trucs cools comme ça...
+
+== À propos
+
+Ce blog est fait avec link:https://asciidoctor.org/[asciidoctor].
+
+== Comment rédiger un article ?
+
+Créer un nouveau fichier `.adoc` et générer le fichier HTML grâce à la commande suivante :
+
+[source,shell script]
+----
+asciidoctor **/*.adoc
+----
+
+Si vous voulez configurer le thème du site, ajoutez ces lignes à début de votre fichier `adoc` :
+
+[source,asciidoc]
+----
+:nofooter: ;; <1>
+:stylesdir: ../../css/ ;; <2>
+:stylesheet: core.min.css ;; <3>
+:source-highlighter: highlightjs ;; <4>
+:highlightjsdir: ../../highlight ;; <5>
+----
+<1> Supprime le pied de page
+<2> Définit le dossier contenant les fichiers de style
+<3> Définit le fichier de style à utiliser
+<4> Définit la bibliothèque pour la coloration syntaxique du code
+<5> Définit le dossier dans lequel sont stockés les fichiers pour la coloration syntaxique

@@ -1,0 +1,38 @@
+= Combattre la procrastination
+:nofooter:
+:stylesdir: ../../css/
+:stylesheet: core.min.css
+:source-highlighter: highlightjs
+:highlightjsdir: ../../highlight
+
+== 11 Octobre 2019
+
+Nous avons tous un problème avec la procrastination.
+Cela peut sembler évident, mais il existe des outils pour nous aider à lutter contre celle-ci.
+
+Lorsque vous regardez quelque chose que vous ne voulez vraiment pas faire, votre cerveau active une zone associée à la douleur.
+Parfois, il semble pénible d'accomplir une tâche simple parce que vous désirez faire autre chose.
+Naturellement, votre cerveau cherche un moyen de nier cette sensation en déplaçant votre attention sur une autre activité.
+Mais les chercheurs ont découvert que *lorsque les gens commençaient réellement à travailler sur quelque chose qu'ils n'aimaient pas, ce malaise neurologique disparaissait presque immédiatement*.
+
+Lorsque vous tergiversez, voici ce qui se passe : vous devez faire quelque chose qui vous met un peu mal à l'aise.
+Vous n'aimez pas cette sensation alors vous portez votre attention sur quelque chose de plus agréable.
+Vous vous sentez plus heureux mais c'est une sensation éphémère.
+Il existe un petit outil mental que vous pouvez utiliser pour lutter contre la procrastination.
+Cet outil s'appelle le *Pomodoro*.
+
+Cette méthode de gestion du temps a été inventée par Francesco Cirillo au début des années 1980.
+*Pomodoro* est le mot italien pour la tomate.
+Le nom vient du minuteur de cuisine en forme de tomate que vous utilisez sans doute pour cuisiner.
+Tout ce que vous avez à faire est de régler une minuterie sur 25 minutes.
+Pendant cette période, désactivez toutes les interruptions, notifications, puis concentrez-vous.
+Lorsque vous avez terminé, donnez-vous une petite récompense.
+Faites une petite pause de 5 minutes et faites ce que vous désirez (faire une promenade, faire un peu de navigation sur le Web, prendre une tasse de café, ...).
+Vous permettez à votre cerveau de changer de concentration.
+Après cette courte pause, vous pouvez commencer un nouveau pomodoro : 25 minutes où vous êtes totalement concentré sur votre tâche.
+
+== Conclusion
+
+La technique *Pomodoro* est très efficace.
+Vous pouvez le comparer à un entraînement mental intense suivi d'une relaxation mentale.
+Essayez !

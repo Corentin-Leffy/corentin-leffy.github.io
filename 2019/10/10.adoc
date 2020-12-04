@@ -1,0 +1,71 @@
+= Projet Euler - Multiples de 3 et 5
+:nofooter:
+:stylesdir: ../../css/
+:stylesheet: core.min.css
+:source-highlighter: highlightjs
+:highlightjsdir: ../../highlight
+
+== 10 Octobre 2019
+
+[quote]
+If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23. Find the sum of all the multiples of 3 or 5 below 1000.
+
+[source,kotlin]
+----
+fun main() {
+    (0 until 1000)
+        .filter { it.isTriple or it.isQuintuple }
+        .sum()
+        .also { println(it) }
+}
+
+val Int.isTriple: Boolean
+    inline get() = this % 3 == 0
+
+val Int.isQuintuple: Boolean
+    inline get() = this % 5 == 0
+----
+
+Le problème est plutôt simple.
+Il suffit de trouver les multiples de 3 et 5, presque comme dans le jeu Fizz Buzz.
+J'ai donc décidé de créer une liste de nombres naturels de 0 à 1000 et de vérifier si chacun de ces nombres est un triple ou une quintuple.
+Ensuite, je les ai additionné.
+
+Kotlin nous donne l'occasion d'écrire du code fluide.
+Par exemple, `(0 until 1000)` se comprend très facilement, même pour des personnes non-technique.
+Les link:https://kotlinlang.org/docs/reference/inline-functions.html#inline-properties[inline properties] en Kotlin apporte de la lisibilité sans pour autant perdre en performance avec des appels de méthodes supplémentaires (dans notre exemple ce n'est en aucun cas un problème).
+Grâce à cela, les développeurs peuvent écrire du code que tout le monde peut comprendre sans difficultés.
+`val Int.isTriple` et `val Int.isQuintuple` sont toutes les deux propriétés **inline**.
+À la compilation, elles seront remplacées par leur définition.
+
+On peut inspecter le bytecode Java généré :
+
+[source,java]
+----
+public static final void main {
+    Iterable $this$filter$iv = (Iterable)RangesKt.until(0, 1000)
+    Collection destination$iv$iv = (Collection)(new ArrayList())
+    Iterator var5 = $this$filter$iv.iterator()
+
+    while(var5.hasNext()) {
+        Object element$iv$iv = var5.next()
+        int it = ((Number)element$iv$iv).intValue()
+        boolean var11 = it % 3 == 0
+        boolean var12 = it % 5 == 0
+        if (var11 | var12) {
+            destination$iv$iv.add(element$iv$iv)
+        }
+    }
+
+    int var13 = CollectionsKt.sumOfInt((Iterable)((List)destination$iv$iv))
+    System.out.println(var13)
+}
+----
+
+Comme vous pouvez le constater, les opérations de comparaison ont été intégrées à l'endroit de leur appel.
+Sans le mot clef `inline`, le code Java contiendrait une référence à une méthode statique.
+
+== Conclusion
+
+Les propriétés `inline` aident le compilateur à produire un bytecode plus optimal, supprimant des invocations de méthodes inutiles à l'exécution.
+Ainsi, le code Kotlin est plus plaisant à lire et est simplifié.

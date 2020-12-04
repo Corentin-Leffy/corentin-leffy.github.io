@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.12">
+<title>Projet Euler - Multiples de 3 et 5</title>
+<style>
+pre code{display:block;overflow:auto;background-color:#011627}code{font-family:Menlo, Roboto Mono, Courier New, monospace;color:#D6DEEB;font-size:16px;background-color:#011627;border:1px solid #373b41;box-shadow:2px 4px 25px rgba(0, 0, 0, .15);border-radius:4px;padding:2px 4px}blockquote{border-left:0.3rem solid #eaeaea;margin-left:0;margin-right:0;font-style:italic;padding:1.5rem}blockquote span{display:block;font-style:normal;font-weight:bold;margin-top:1em}a{color:#81a2be;text-decoration:none}body{max-width:50em;padding-bottom:3em;margin:2em auto;font-family:'Lato', Arial, sans-serif;font-size:20px;color:#c5c8c6;line-height:1.5em;background-color: #1d1f21;}nav ol,nav ul{margin:0;padding:0;list-style:none}img{max-width:50em}h1{font-weight:bold;font-size:2em;margin-bottom:0.3em;padding-bottom:0.3em}p{margin-top:0.3em;padding:0;text-align:justify}
+</style>
+<link rel="stylesheet" href="../../highlight/styles/github.min.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Projet Euler - Multiples de 3 et 5</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_10_octobre_2019">10 Octobre 2019</h2>
+<div class="sectionbody">
+<div class="quoteblock">
+<blockquote>
+If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23. Find the sum of all the multiples of 3 or 5 below 1000.
+</blockquote>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">fun main() {
+    (0 until 1000)
+        .filter { it.isTriple or it.isQuintuple }
+        .sum()
+        .also { println(it) }
+}
+
+val Int.isTriple: Boolean
+    inline get() = this % 3 == 0
+
+val Int.isQuintuple: Boolean
+    inline get() = this % 5 == 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Le problème est plutôt simple.
+Il suffit de trouver les multiples de 3 et 5, presque comme dans le jeu Fizz Buzz.
+J&#8217;ai donc décidé de créer une liste de nombres naturels de 0 à 1000 et de vérifier si chacun de ces nombres est un triple ou une quintuple.
+Ensuite, je les ai additionné.</p>
+</div>
+<div class="paragraph">
+<p>Kotlin nous donne l&#8217;occasion d&#8217;écrire du code fluide.
+Par exemple, <code>(0 until 1000)</code> se comprend très facilement, même pour des personnes non-technique.
+Les <a href="https://kotlinlang.org/docs/reference/inline-functions.html#inline-properties">inline properties</a> en Kotlin apporte de la lisibilité sans pour autant perdre en performance avec des appels de méthodes supplémentaires (dans notre exemple ce n&#8217;est en aucun cas un problème).
+Grâce à cela, les développeurs peuvent écrire du code que tout le monde peut comprendre sans difficultés.
+<code>val Int.isTriple</code> et <code>val Int.isQuintuple</code> sont toutes les deux propriétés <strong>inline</strong>.
+À la compilation, elles seront remplacées par leur définition.</p>
+</div>
+<div class="paragraph">
+<p>On peut inspecter le bytecode Java généré :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static final void main {
+    Iterable $this$filter$iv = (Iterable)RangesKt.until(0, 1000)
+    Collection destination$iv$iv = (Collection)(new ArrayList())
+    Iterator var5 = $this$filter$iv.iterator()
+
+    while(var5.hasNext()) {
+        Object element$iv$iv = var5.next()
+        int it = ((Number)element$iv$iv).intValue()
+        boolean var11 = it % 3 == 0
+        boolean var12 = it % 5 == 0
+        if (var11 | var12) {
+            destination$iv$iv.add(element$iv$iv)
+        }
+    }
+
+    int var13 = CollectionsKt.sumOfInt((Iterable)((List)destination$iv$iv))
+    System.out.println(var13)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Comme vous pouvez le constater, les opérations de comparaison ont été intégrées à l&#8217;endroit de leur appel.
+Sans le mot clef <code>inline</code>, le code Java contiendrait une référence à une méthode statique.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Les propriétés <code>inline</code> aident le compilateur à produire un bytecode plus optimal, supprimant des invocations de méthodes inutiles à l&#8217;exécution.
+Ainsi, le code Kotlin est plus plaisant à lire et est simplifié.</p>
+</div>
+</div>
+</div>
+</div>
+<script src="../../highlight/highlight.min.js"></script>
+<script>
+if (!hljs.initHighlighting.called) {
+  hljs.initHighlighting.called = true
+  ;[].slice.call(document.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightBlock(el) })
+}
+</script>
+</body>
+</html>

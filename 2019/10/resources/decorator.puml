@@ -1,0 +1,39 @@
+@startuml
+skinparam backgroundColor transparent
+
+interface Coffee <<interface>> {
++ getCost(): Double
++ getIngredients(): String
+}
+
+abstract class CoffeeDecorator {
+- Coffee coffee
++ getCost(): Double
++ getIngredients(): String
+}
+
+class SimpleCoffee {
+...
++ getCost(): Double
++ getIngredients(): String
+}
+
+class WithMilk {
+...
++ getCost(): Double
++ getIngredients(): String
+}
+
+class WithSprinkles {
+...
++ getCost(): Double
++ getIngredients(): String
+}
+
+Coffee <|.right.. SimpleCoffee
+Coffee <|.. CoffeeDecorator
+CoffeeDecorator o--  Coffee
+CoffeeDecorator <|.. WithMilk
+CoffeeDecorator <|.. WithSprinkles
+
+@enduml

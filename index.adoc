@@ -1,0 +1,16 @@
+= Blog
+:nofooter:
+:stylesdir: ./css/
+:stylesheet: core.min.css
+
+== Corentin Leffy
+
+C'est mon blog personnel.
+Je suis un développeur passionné par la création logicielle et j'essaie d'écrire à propos de ce qui peut me passionner, comme Android, Kotlin, Dart, ...
+
+== Posts
+
+* <<2019/10/29.adoc#, Le patron de conception Décorateur en Dart>>, 29 Octobre 2019
+* <<2019/10/15.adoc#, Projet Euler - Numéros pairs de Fibonacci>>, 15 Octobre 2019
+* <<2019/10/11.adoc#, Combattre la procrastination>>, 11 Octobre 2019
+* <<2019/10/10.adoc#, Projet Euler - Multiples de 3 et 5>>, 10 Octobre 2019
