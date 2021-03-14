@@ -1,0 +1,28 @@
+@startuml
+skinparam backgroundColor transparent
+
+interface Iterable
+interface Collection
+interface Set
+interface List
+
+interface MutableIterable
+interface MutableCollection
+interface MutableSet
+interface MutableList
+
+interface java.util.ArrayList
+interface java.util.HashSet
+
+
+Iterable <|-right- MutableIterable
+Iterable <|-- Collection
+Collection <|-right- MutableCollection
+Collection <|-- Set
+Collection <|-- List
+Set <|-right- MutableSet
+List <|-right- MutableList
+MutableList <|-- java.util.ArrayList
+MutableSet <|-- java.util.HashSet
+
+@enduml

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.12">
+<title>Limiter la mutabilité en Kotlin</title>
+<style>
+pre code{display:block;overflow:auto;background-color:#011627}code{font-family:Menlo, Roboto Mono, Courier New, monospace;color:#D6DEEB;font-size:16px;background-color:#011627;border:1px solid #373b41;box-shadow:2px 4px 25px rgba(0, 0, 0, .15);border-radius:4px;padding:2px 4px}blockquote{border-left:0.3rem solid #eaeaea;margin-left:0;margin-right:0;font-style:italic;padding:1.5rem}blockquote span{display:block;font-style:normal;font-weight:bold;margin-top:1em}a{color:#81a2be;text-decoration:none}body{max-width:50em;padding-bottom:3em;margin:2em auto;font-family:'Lato', Arial, sans-serif;font-size:20px;color:#c5c8c6;line-height:1.5em;background-color: #1d1f21;}nav ol,nav ul{margin:0;padding:0;list-style:none}img{max-width:50em}h1{font-weight:bold;font-size:2em;margin-bottom:0.3em;padding-bottom:0.3em}p{margin-top:0.3em;padding:0;text-align:justify}
+</style>
+<link rel="stylesheet" href="../../highlight/styles/github.min.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Limiter la mutabilité en Kotlin</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_14_mars_2021">14 Mars 2021</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Il est plus difficile de comprendre et déboguer un programme contenant plusieurs points de mutation.
+Une classe avec de nombreux points de mutations, dépendant des uns et des autres, va être compliqué à comprendre et à modifier, et peut engendrer des situations inattendues ou des erreurs.</p>
+</div>
+<div class="paragraph">
+<p>De plus, l&#8217;immutabilité facilite le raisonnement.
+Un état immutable est clair : il n&#8217;est pas modifiable et ne peut donc pas changer.
+À l&#8217;inverse, un état mutable est difficile à appréhender car celui-ci peut changer à tout moment.
+De plus, même vérifié, rien ne nous garantit que cet état n&#8217;a pas déjà changé.</p>
+</div>
+<div class="paragraph">
+<p>Quand un état mute, les objets dépendant de celui-ci doivent être notifiés du changement.
+Par exemple, si une liste ordonnée contient un élément mutable, quand cet objet change, alors il faut ordonner de nouveau la liste.</p>
+</div>
+<div class="paragraph">
+<p>Kotlin est pensé pour limiter la mutabilité : il est facile de créer des objets immutables et de garder les propriétés immutables.</p>
+</div>
+<div class="sect2">
+<h3 id="_les_propriétés_en_lecture_seule_val">Les propriétés en lecture seule <code>val</code></h3>
+<div class="paragraph">
+<p>Le mot clef <code>val</code> empêche la ré-initialisation d&#8217;une propriété :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val a = 10
+a = 20 // Erreur</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cependant, une propriété en lecture seule n&#8217;empêche pas obligatoirement la mutation.
+Par exemple, une propriété en lecture seule peut contenir un objet mutable :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val liste = mutableListOf(1, 2, 3, 4)
+liste.add(5) // [1, 2, 3, 4, 5]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_les_collections_en_lecture_seule">Les collections en lecture seule</h3>
+<div class="paragraph">
+<p>En Kotlin, les collections en lecture seule sont séparées des collections mutables.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="resources/collections.png" alt="Diagramme de classes des interfaces de collection en Kotlin">
+</div>
+</div>
+<div class="paragraph">
+<p>Les collections en lecture seule ne sont pas nécessairement immutables.
+Très souvent, celles-ci sont mutables, mais elles sont cachées derrière une interface en lecture seule.
+Par exemple, la méthode <code>Iterable.map</code> retourne une <code>ArrayList</code> (mutable), en tant que <code>List</code> (immutable).</p>
+</div>
+<div class="paragraph">
+<p>Pour passer d&#8217;une collection immutable à une collection mutable, il faut utiliser les méthodes de la bibliothèque standard : <code>toMutableSet()</code> ou <code>toMutableList()</code>.</p>
+</div>
+<div class="paragraph">
+<p>On peut modifier une collection d&#8217;éléments de deux manières :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val liste1 = mutableListOf&lt;Int&gt;()
+var liste2 = listOf&lt;Int&gt;()
+
+liste1 += 1 // liste1.plusAssign(1)
+liste2 += 1 // liste2 = liste2.plus(1)
+
+// À éviter
+var liste3 = mutableListOf&lt;Int&gt;()</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_la_copie_des_classes_de_données">La copie des classes de données</h3>
+<div class="paragraph">
+<p>Le mot clé <code>data</code> permet au compilateur de générer, à partir de chaque propriété dans le constructeur primaire, les méthodes suivantes : <code>equals()</code>, <code>hashCode()</code>, <code>toString()</code>, <code>componentN()</code> et <code>copy()</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">data class Utilisateur(
+    val prenom: String,
+    val nom: String
+)
+
+var utilisateur = Utilisateur("Corentin", "Leffy")
+utilisateur = utilisateur.copy(prenom = "Henri") // Utilisateur(prenom=Henri, nom=Leffy)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Il s&#8217;agit d&#8217;une solution simple qui permet de rendre les classes de données immuables.
+Cette solution est moins "efficace" que d&#8217;utiliser directement un objet mutable à la place, mais elle présente tous les avantages des objets immuables et est à préférer par défaut.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_lexposition_des_propriétés_mutables">L&#8217;exposition des propriétés mutables</h3>
+<div class="paragraph">
+<p>Si une propriété mutable définit l&#8217;état d&#8217;un objet, alors il ne faut pas que celle-ci soit exposée publiquement.</p>
+</div>
+<div class="paragraph">
+<p>Prenons en considération le code suivant :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">class TousLesUtilisateur {
+    private val utilisateursStockes = mutableListOf&lt;Utilisateur&gt;()
+
+    operator fun invoke(): MutableList&lt;Utilisateur&gt; = utilisateursStockes
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>On peut modifier l&#8217;état de <code>TousLesUtilisateur</code>, à partir de la méthode <code>invoke()</code> :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val tousLesUtilisateurs = TousLesUtilisateurs()
+val utilisateursStockes = tousLesUtilisateurs()
+utilisateursStockes.add(Utilisateur("John", "Doe")) // Oups</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pour empêcher des modifications accidentelles, deux solutions s&#8217;offrent à nous :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Retourner une copie de l&#8217;objet (grâce à la méthode <code>copy()</code> par exemple)</p>
+</li>
+<li>
+<p>Modifier le type de retour, pour que ce type ne permette que de la lecture :</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">class TousLesUtilisateur {
+    private val utilisateursStockes = mutableListOf&lt;Utilisateur&gt;()
+
+    operator fun invoke(): List&lt;Utilisateur&gt; = utilisateursStockes
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>Il faut limiter les points de mutation :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Préferer <code>val</code> à <code>var</code>.</p>
+</li>
+<li>
+<p>Préférer une propriété immutable à une propriété mutable.</p>
+</li>
+<li>
+<p>Si une propriété doit changer, considérer l&#8217;utilisation d&#8217;une <code>data class</code> et de la méthode <code>copy()</code>.</p>
+</li>
+<li>
+<p>Préférer des collections en lecture seule plutôt que des collections mutables.</p>
+</li>
+<li>
+<p>Ne pas exposer publiquement les objets mutables.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Source : <a href="https://leanpub.com/effectivekotlin/">Effective Kotlin</a></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="../../highlight/highlight.min.js"></script>
+<script>
+if (!hljs.initHighlighting.called) {
+  hljs.initHighlighting.called = true
+  ;[].slice.call(document.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightBlock(el) })
+}
+</script>
+</body>
+</html>
